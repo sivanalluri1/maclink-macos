@@ -1,5 +1,6 @@
 # Xcode
 DerivedData/
+.derived-data/
 build/
 *.xcuserstate
 xcuserdata/
@@ -19,4 +20,3 @@ Package.resolved
 .env
 .env.*
 !.env.example
-
