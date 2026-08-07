@@ -8,9 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		168757836B4D13DC3D80263B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */; };
+		7DC2159283496D281BD7444F /* BonjourServiceDescriptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */; };
+		9141039A858DA6F98657A09F /* DeviceIdentityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */; };
 		98A83674CB4A2BE1F32486BB /* ConnectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */; };
 		BE10CE1B08A5FEE118F00E3B /* MacLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47670AF1B01AA270BFC6861A /* MacLinkApp.swift */; };
+		CB1AB36D15D437AF710E5B51 /* BonjourServiceDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */; };
 		DB26549825ADD28C49F276B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27729AA04875B651CEC2C26F /* ContentView.swift */; };
+		DE1DAB2F446F702DCA48F978 /* BonjourAdvertiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */; };
 		F78ED9C342646D0FAA79ACC4 /* ConnectionPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644C8C52D0615942567255B7 /* ConnectionPhase.swift */; };
 		FDF0AE3FBEE20A62C29F24F5 /* ConnectionPhaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */; };
 /* End PBXBuildFile section */
@@ -27,21 +31,38 @@
 
 /* Begin PBXFileReference section */
 		0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPhaseTests.swift; sourceTree = "<group>"; };
+		1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDescriptorTests.swift; sourceTree = "<group>"; };
+		133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDescriptor.swift; sourceTree = "<group>"; };
 		27729AA04875B651CEC2C26F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47670AF1B01AA270BFC6861A /* MacLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacLinkApp.swift; sourceTree = "<group>"; };
+		4B753936EBD91D8B234E7C82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		644C8C52D0615942567255B7 /* ConnectionPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPhase.swift; sourceTree = "<group>"; };
+		831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourAdvertiser.swift; sourceTree = "<group>"; };
+		95EBE080A42FF9C264626879 /* MacLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacLink.entitlements; sourceTree = "<group>"; };
 		964C59CE4CB41AECC1D64CD5 /* MacLinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacLinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0A7485C4278E11560E673F0 /* MacLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityStore.swift; sourceTree = "<group>"; };
 		DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		2FCB23D9A98BD64555D396CB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4B753936EBD91D8B234E7C82 /* Info.plist */,
+				95EBE080A42FF9C264626879 /* MacLink.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		3F0E156461E858CF0F994155 /* MacLink */ = {
 			isa = PBXGroup;
 			children = (
 				C806E4718AC44DEFF16C5679 /* App */,
 				F01732EDFE48F5A63A059241 /* Connection */,
+				A0D8F2288B36C19E2CA00687 /* Discovery */,
+				2FCB23D9A98BD64555D396CB /* Resources */,
 				75B4E0666EB80A754862E776 /* UI */,
 			);
 			path = MacLink;
@@ -54,6 +75,16 @@
 				43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		A0D8F2288B36C19E2CA00687 /* Discovery */ = {
+			isa = PBXGroup;
+			children = (
+				831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */,
+				133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */,
+				C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */,
+			);
+			path = Discovery;
 			sourceTree = "<group>";
 		};
 		B2A23EF113C80A4A823E6844 = {
@@ -94,6 +125,7 @@
 		FEB1E1FAEB842D45375A2959 /* MacLinkTests */ = {
 			isa = PBXGroup;
 			children = (
+				1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */,
 				0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */,
 			);
 			path = MacLinkTests;
@@ -181,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DC2159283496D281BD7444F /* BonjourServiceDescriptorTests.swift in Sources */,
 				FDF0AE3FBEE20A62C29F24F5 /* ConnectionPhaseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,9 +222,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE1DAB2F446F702DCA48F978 /* BonjourAdvertiser.swift in Sources */,
+				CB1AB36D15D437AF710E5B51 /* BonjourServiceDescriptor.swift in Sources */,
 				98A83674CB4A2BE1F32486BB /* ConnectionModel.swift in Sources */,
 				F78ED9C342646D0FAA79ACC4 /* ConnectionPhase.swift in Sources */,
 				DB26549825ADD28C49F276B2 /* ContentView.swift in Sources */,
+				9141039A858DA6F98657A09F /* DeviceIdentityStore.swift in Sources */,
 				BE10CE1B08A5FEE118F00E3B /* MacLinkApp.swift in Sources */,
 				168757836B4D13DC3D80263B /* SettingsView.swift in Sources */,
 			);
@@ -273,7 +309,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -306,11 +341,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MacLink/Resources/MacLink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MacLink;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Siva Nalluri. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "MacLink connects securely to your paired Android phone on your local network.";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MacLink/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -325,11 +359,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MacLink/Resources/MacLink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MacLink;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Siva Nalluri. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "MacLink connects securely to your paired Android phone on your local network.";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MacLink/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -394,7 +427,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;

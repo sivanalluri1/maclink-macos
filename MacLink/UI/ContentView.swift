@@ -33,6 +33,19 @@ struct ContentView: View {
                         .frame(maxWidth: 430)
                 }
 
+                if case .ready(let port) = connection.advertisementState {
+                    Label("Visible on the local network • Port \(port)", systemImage: "bonjour")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                if let error = connection.lastError {
+                    Text(error)
+                        .font(.callout)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
                 if connection.phase == .stopped {
                     Button("Find Android Phone") {
                         connection.startDiscovery()
@@ -62,7 +75,7 @@ struct ContentView: View {
         case .stopped:
             "Pair your Android phone to mirror notifications, share files, and keep both devices in sync."
         case .discovering:
-            "Searching for MacLink Companion on your local network."
+            "Waiting for MacLink Companion to find this Mac on your local network."
         case .connecting:
             "Opening a secure connection to your phone."
         case .authenticating:
@@ -91,4 +104,3 @@ struct ContentView: View {
         .environment(ConnectionModel())
         .frame(width: 820, height: 560)
 }
-

@@ -13,9 +13,9 @@ network.
 
 ## Development status
 
-The project is in its foundation phase. The first milestone establishes a native
-application shell and the boundaries for pairing, connectivity, protocol,
-security, synchronization, and user-facing features.
+The project has a native application shell and can advertise a sandboxed local
+TCP listener through Bonjour as `_maclink._tcp`. Pairing, secure transport, and
+feature synchronization are not implemented yet.
 
 The shared system design is maintained in the parent `MacLink` directory:
 `ARCHITECTURE.md`, `PROTOCOL.md`, and `SECURITY.md`.
@@ -32,4 +32,3 @@ Open `MacLink.xcodeproj` in Xcode or run:
 ```sh
 xcodebuild -project MacLink.xcodeproj -scheme MacLink -configuration Debug build
 ```
-
