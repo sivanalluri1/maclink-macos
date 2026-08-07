@@ -39,6 +39,19 @@ struct ContentView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                if let phone = connection.detectedPhone {
+                    VStack(spacing: 8) {
+                        Label(phone.deviceName, systemImage: "iphone")
+                            .font(.title3.weight(.semibold))
+                        Text("Android • MacLink Companion \(phone.appVersion) • Unpaired")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .frame(maxWidth: 430)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                }
+
                 if let error = connection.lastError {
                     Text(error)
                         .font(.callout)
@@ -61,7 +74,9 @@ struct ContentView: View {
 
                 Spacer()
 
-                Text("Local-first • End-to-end encrypted")
+                Text(connection.detectedPhone == nil
+                     ? "Local-first • Secure pairing pending"
+                     : "Unpaired • No private data exchanged")
                     .font(.footnote)
                     .foregroundStyle(.tertiary)
             }
@@ -71,7 +86,11 @@ struct ContentView: View {
     }
 
     private var statusMessage: String {
-        switch connection.phase {
+        if connection.detectedPhone != nil {
+            return "Your phone reached this Mac and is ready for the secure pairing phase."
+        }
+
+        return switch connection.phase {
         case .stopped:
             "Pair your Android phone to mirror notifications, share files, and keep both devices in sync."
         case .discovering:

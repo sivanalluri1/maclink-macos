@@ -10,6 +10,8 @@
 		168757836B4D13DC3D80263B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */; };
 		7DC2159283496D281BD7444F /* BonjourServiceDescriptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */; };
 		9141039A858DA6F98657A09F /* DeviceIdentityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */; };
+		972461998BFE63F51C0C0B94 /* PhonePresenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606C28EEECB5BD0F766D750C /* PhonePresenceTests.swift */; };
+		97F24E1673FC3B4B427F806B /* PhonePresence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB05336A6648D1F1602D987 /* PhonePresence.swift */; };
 		98A83674CB4A2BE1F32486BB /* ConnectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */; };
 		BE10CE1B08A5FEE118F00E3B /* MacLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47670AF1B01AA270BFC6861A /* MacLinkApp.swift */; };
 		CB1AB36D15D437AF710E5B51 /* BonjourServiceDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */; };
@@ -37,7 +39,9 @@
 		43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		47670AF1B01AA270BFC6861A /* MacLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacLinkApp.swift; sourceTree = "<group>"; };
 		4B753936EBD91D8B234E7C82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		606C28EEECB5BD0F766D750C /* PhonePresenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonePresenceTests.swift; sourceTree = "<group>"; };
 		644C8C52D0615942567255B7 /* ConnectionPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPhase.swift; sourceTree = "<group>"; };
+		7EB05336A6648D1F1602D987 /* PhonePresence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonePresence.swift; sourceTree = "<group>"; };
 		831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourAdvertiser.swift; sourceTree = "<group>"; };
 		95EBE080A42FF9C264626879 /* MacLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacLink.entitlements; sourceTree = "<group>"; };
 		964C59CE4CB41AECC1D64CD5 /* MacLinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacLinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +122,7 @@
 			children = (
 				DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */,
 				644C8C52D0615942567255B7 /* ConnectionPhase.swift */,
+				7EB05336A6648D1F1602D987 /* PhonePresence.swift */,
 			);
 			path = Connection;
 			sourceTree = "<group>";
@@ -127,6 +132,7 @@
 			children = (
 				1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */,
 				0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */,
+				606C28EEECB5BD0F766D750C /* PhonePresenceTests.swift */,
 			);
 			path = MacLinkTests;
 			sourceTree = "<group>";
@@ -215,6 +221,7 @@
 			files = (
 				7DC2159283496D281BD7444F /* BonjourServiceDescriptorTests.swift in Sources */,
 				FDF0AE3FBEE20A62C29F24F5 /* ConnectionPhaseTests.swift in Sources */,
+				972461998BFE63F51C0C0B94 /* PhonePresenceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +236,7 @@
 				DB26549825ADD28C49F276B2 /* ContentView.swift in Sources */,
 				9141039A858DA6F98657A09F /* DeviceIdentityStore.swift in Sources */,
 				BE10CE1B08A5FEE118F00E3B /* MacLinkApp.swift in Sources */,
+				97F24E1673FC3B4B427F806B /* PhonePresence.swift in Sources */,
 				168757836B4D13DC3D80263B /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

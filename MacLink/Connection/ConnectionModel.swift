@@ -7,6 +7,7 @@ final class ConnectionModel {
     private(set) var phase: ConnectionPhase = .stopped
     private(set) var lastError: String?
     private(set) var advertisementState: BonjourAdvertisementState = .stopped
+    private(set) var detectedPhone: PhonePresence?
 
     private let advertiser: BonjourAdvertiser
 
@@ -19,6 +20,12 @@ final class ConnectionModel {
         self.advertiser = advertiser
         advertiser.onStateChange = { [weak self] state in
             self?.handleAdvertisementState(state)
+        }
+        advertiser.onPhoneDetected = { [weak self] phone in
+            self?.handlePhoneDetected(phone)
+        }
+        advertiser.onPhoneDisconnected = { [weak self] in
+            self?.handlePhoneDisconnected()
         }
     }
 
@@ -33,6 +40,7 @@ final class ConnectionModel {
 
     func stop() {
         advertiser.stop()
+        detectedPhone = nil
         transition(to: .stopped)
     }
 
@@ -54,6 +62,20 @@ final class ConnectionModel {
             if phase != .stopped {
                 phase = .stopped
             }
+        }
+    }
+
+    private func handlePhoneDetected(_ phone: PhonePresence) {
+        detectedPhone = phone
+        if phase == .discovering {
+            transition(to: .connecting)
+        }
+    }
+
+    private func handlePhoneDisconnected() {
+        detectedPhone = nil
+        if phase == .connecting {
+            transition(to: .discovering)
         }
     }
 }

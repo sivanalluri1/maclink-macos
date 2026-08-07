@@ -35,5 +35,9 @@ struct ConnectionPhaseTests {
         #expect(ConnectionPhase.connected.canTransition(to: .recovering))
         #expect(ConnectionPhase.recovering.canTransition(to: .discovering))
     }
-}
 
+    @Test
+    func preAuthenticationConnectionCanReturnToDiscovery() {
+        #expect(ConnectionPhase.connecting.canTransition(to: .discovering))
+    }
+}

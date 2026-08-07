@@ -11,9 +11,13 @@ enum BonjourAdvertisementState: Equatable, Sendable {
 @MainActor
 final class BonjourAdvertiser {
     var onStateChange: ((BonjourAdvertisementState) -> Void)?
+    var onPhoneDetected: ((PhonePresence) -> Void)?
+    var onPhoneDisconnected: (() -> Void)?
 
     private let descriptor: BonjourServiceDescriptor
     private var listener: NWListener?
+    private var phoneConnection: NWConnection?
+    private static let maximumPresenceMessageSize = 8 * 1024
 
     init(descriptor: BonjourServiceDescriptor) {
         self.descriptor = descriptor
@@ -30,8 +34,10 @@ final class BonjourAdvertiser {
                 domain: nil,
                 txtRecord: descriptor.txtRecord
             )
-            listener.newConnectionHandler = { connection in
-                connection.cancel()
+            listener.newConnectionHandler = { [weak self] connection in
+                Task { @MainActor in
+                    self?.accept(connection)
+                }
             }
             listener.stateUpdateHandler = { [weak self, weak listener] state in
                 Task { @MainActor in
@@ -48,11 +54,100 @@ final class BonjourAdvertiser {
     }
 
     func stop() {
+        phoneConnection?.cancel()
+        phoneConnection = nil
         listener?.stateUpdateHandler = nil
         listener?.newConnectionHandler = nil
         listener?.cancel()
         listener = nil
         onStateChange?(.stopped)
+    }
+
+    private func accept(_ connection: NWConnection) {
+        phoneConnection?.cancel()
+        phoneConnection = connection
+
+        connection.stateUpdateHandler = { [weak self, weak connection] state in
+            Task { @MainActor in
+                guard let self, let connection, connection === self.phoneConnection else { return }
+                if case .failed = state {
+                    self.disconnectPhone(connection)
+                } else if case .cancelled = state {
+                    self.disconnectPhone(connection)
+                }
+            }
+        }
+        connection.start(queue: .main)
+        receive(on: connection, buffer: Data(), didHandshake: false)
+    }
+
+    private func receive(on connection: NWConnection, buffer: Data, didHandshake: Bool) {
+        connection.receive(minimumIncompleteLength: 1, maximumLength: 4_096) {
+            [weak self, weak connection] data, _, isComplete, error in
+            Task { @MainActor in
+                guard let self, let connection, connection === self.phoneConnection else { return }
+
+                var nextBuffer = buffer
+                if let data {
+                    nextBuffer.append(data)
+                }
+
+                guard nextBuffer.count <= Self.maximumPresenceMessageSize else {
+                    self.disconnectPhone(connection)
+                    return
+                }
+
+                if !didHandshake, let newline = nextBuffer.firstIndex(of: 0x0A) {
+                    let messageData = Data(nextBuffer[..<newline])
+                    let remainder = Data(nextBuffer[nextBuffer.index(after: newline)...])
+                    guard let presence = try? JSONDecoder().decode(PhonePresence.self, from: messageData) else {
+                        self.disconnectPhone(connection)
+                        return
+                    }
+
+                    self.onPhoneDetected?(presence)
+                    self.sendAcknowledgement(on: connection)
+                    self.receive(on: connection, buffer: remainder, didHandshake: true)
+                    return
+                }
+
+                // No application traffic is accepted before secure pairing is implemented.
+                if didHandshake, !nextBuffer.isEmpty {
+                    self.disconnectPhone(connection)
+                } else if isComplete || error != nil {
+                    self.disconnectPhone(connection)
+                } else {
+                    self.receive(on: connection, buffer: nextBuffer, didHandshake: didHandshake)
+                }
+            }
+        }
+    }
+
+    private func sendAcknowledgement(on connection: NWConnection) {
+        let acknowledgement = PresenceAcknowledgement(
+            macDeviceID: descriptor.deviceID,
+            macName: descriptor.displayName
+        )
+        guard var data = try? JSONEncoder().encode(acknowledgement) else {
+            disconnectPhone(connection)
+            return
+        }
+        data.append(0x0A)
+        connection.send(content: data, completion: .contentProcessed { [weak self, weak connection] error in
+            guard error != nil else { return }
+            Task { @MainActor in
+                guard let self, let connection else { return }
+                self.disconnectPhone(connection)
+            }
+        })
+    }
+
+    private func disconnectPhone(_ connection: NWConnection) {
+        guard connection === phoneConnection else { return }
+        connection.stateUpdateHandler = nil
+        connection.cancel()
+        phoneConnection = nil
+        onPhoneDisconnected?()
     }
 
     private func handle(_ state: NWListener.State, listener: NWListener?) {
@@ -81,4 +176,3 @@ final class BonjourAdvertiser {
         onStateChange?(.failed(message: message))
     }
 }
-

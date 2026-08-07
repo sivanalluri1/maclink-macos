@@ -34,6 +34,7 @@ enum ConnectionPhase: String, CaseIterable, Sendable {
         switch (self, next) {
         case (.stopped, .discovering),
              (.discovering, .connecting),
+             (.connecting, .discovering),
              (.connecting, .authenticating),
              (.authenticating, .syncing),
              (.syncing, .connected),
@@ -47,4 +48,3 @@ enum ConnectionPhase: String, CaseIterable, Sendable {
         }
     }
 }
-
