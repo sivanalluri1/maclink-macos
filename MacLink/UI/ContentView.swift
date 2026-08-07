@@ -24,7 +24,7 @@ struct ContentView: View {
                     .symbolEffect(.pulse, isActive: connection.isSearching)
 
                 VStack(spacing: 8) {
-                    Text(connection.phase.title)
+                    Text(connection.detectedPhone == nil ? connection.phase.title : "Phone Detected")
                         .font(.largeTitle.weight(.semibold))
 
                     Text(statusMessage)

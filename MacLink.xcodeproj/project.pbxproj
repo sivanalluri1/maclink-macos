@@ -15,6 +15,7 @@
 		98A83674CB4A2BE1F32486BB /* ConnectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */; };
 		BE10CE1B08A5FEE118F00E3B /* MacLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47670AF1B01AA270BFC6861A /* MacLinkApp.swift */; };
 		CB1AB36D15D437AF710E5B51 /* BonjourServiceDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */; };
+		D92030AE8AA104E38B43838A /* PresenceHandshakeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F9D2B255E5759D50AA7023 /* PresenceHandshakeIntegrationTests.swift */; };
 		DB26549825ADD28C49F276B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27729AA04875B651CEC2C26F /* ContentView.swift */; };
 		DE1DAB2F446F702DCA48F978 /* BonjourAdvertiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */; };
 		F78ED9C342646D0FAA79ACC4 /* ConnectionPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644C8C52D0615942567255B7 /* ConnectionPhase.swift */; };
@@ -46,6 +47,7 @@
 		95EBE080A42FF9C264626879 /* MacLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacLink.entitlements; sourceTree = "<group>"; };
 		964C59CE4CB41AECC1D64CD5 /* MacLinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacLinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0A7485C4278E11560E673F0 /* MacLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4F9D2B255E5759D50AA7023 /* PresenceHandshakeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenceHandshakeIntegrationTests.swift; sourceTree = "<group>"; };
 		C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityStore.swift; sourceTree = "<group>"; };
 		DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -133,6 +135,7 @@
 				1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */,
 				0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */,
 				606C28EEECB5BD0F766D750C /* PhonePresenceTests.swift */,
+				B4F9D2B255E5759D50AA7023 /* PresenceHandshakeIntegrationTests.swift */,
 			);
 			path = MacLinkTests;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				7DC2159283496D281BD7444F /* BonjourServiceDescriptorTests.swift in Sources */,
 				FDF0AE3FBEE20A62C29F24F5 /* ConnectionPhaseTests.swift in Sources */,
 				972461998BFE63F51C0C0B94 /* PhonePresenceTests.swift in Sources */,
+				D92030AE8AA104E38B43838A /* PresenceHandshakeIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
