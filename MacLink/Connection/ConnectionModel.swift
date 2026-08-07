@@ -8,6 +8,7 @@ final class ConnectionModel {
     private(set) var lastError: String?
     private(set) var advertisementState: BonjourAdvertisementState = .stopped
     private(set) var detectedPhone: PhonePresence?
+    private(set) var pairing: SecurePairingCoordinator
 
     private let advertiser: BonjourAdvertiser
 
@@ -17,7 +18,12 @@ final class ConnectionModel {
             displayName: ProcessInfo.processInfo.hostName
         )
         let advertiser = advertiser ?? BonjourAdvertiser(descriptor: descriptor)
+        let pairing = SecurePairingCoordinator(
+            macDeviceID: descriptor.deviceID,
+            macName: descriptor.displayName
+        )
         self.advertiser = advertiser
+        self.pairing = pairing
         advertiser.onStateChange = { [weak self] state in
             self?.handleAdvertisementState(state)
         }
@@ -26,6 +32,12 @@ final class ConnectionModel {
         }
         advertiser.onPhoneDisconnected = { [weak self] in
             self?.handlePhoneDisconnected()
+        }
+        advertiser.onPairingMessage = { [weak pairing] data in
+            pairing?.handle(data)
+        }
+        pairing.sendMessage = { [weak advertiser] data in
+            advertiser?.sendPairingMessage(data)
         }
     }
 
@@ -41,7 +53,27 @@ final class ConnectionModel {
     func stop() {
         advertiser.stop()
         detectedPhone = nil
+        pairing.reset()
         transition(to: .stopped)
+    }
+
+    func beginPairing() {
+        guard let detectedPhone else { return }
+        if phase == .connecting {
+            transition(to: .authenticating)
+        }
+        pairing.begin(for: detectedPhone)
+    }
+
+    func approvePairing() {
+        pairing.approve()
+    }
+
+    func rejectPairing() {
+        pairing.reject()
+        if phase == .authenticating {
+            phase = .connecting
+        }
     }
 
     func transition(to next: ConnectionPhase) {
@@ -67,6 +99,7 @@ final class ConnectionModel {
 
     private func handlePhoneDetected(_ phone: PhonePresence) {
         detectedPhone = phone
+        pairing.restorePairing(for: phone)
         if phase == .discovering {
             transition(to: .connecting)
         }
@@ -74,8 +107,11 @@ final class ConnectionModel {
 
     private func handlePhoneDisconnected() {
         detectedPhone = nil
-        if phase == .connecting {
-            transition(to: .discovering)
+        if pairing.status != .paired {
+            pairing.reset()
+        }
+        if phase == .connecting || phase == .authenticating {
+            phase = .discovering
         }
     }
 }

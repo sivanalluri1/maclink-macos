@@ -13,11 +13,12 @@ final class BonjourAdvertiser {
     var onStateChange: ((BonjourAdvertisementState) -> Void)?
     var onPhoneDetected: ((PhonePresence) -> Void)?
     var onPhoneDisconnected: (() -> Void)?
+    var onPairingMessage: ((Data) -> Void)?
 
     private let descriptor: BonjourServiceDescriptor
     private var listener: NWListener?
     private var phoneConnection: NWConnection?
-    private static let maximumPresenceMessageSize = 8 * 1024
+    private static let maximumMessageSize = 16 * 1024
 
     init(descriptor: BonjourServiceDescriptor) {
         self.descriptor = descriptor
@@ -63,6 +64,20 @@ final class BonjourAdvertiser {
         onStateChange?(.stopped)
     }
 
+    func sendPairingMessage(_ message: Data) {
+        guard let connection = phoneConnection,
+              message.count <= Self.maximumMessageSize else { return }
+        var framed = message
+        framed.append(0x0A)
+        connection.send(content: framed, completion: .contentProcessed { [weak self, weak connection] error in
+            guard error != nil else { return }
+            Task { @MainActor in
+                guard let self, let connection else { return }
+                self.disconnectPhone(connection)
+            }
+        })
+    }
+
     private func accept(_ connection: NWConnection) {
         phoneConnection?.cancel()
         phoneConnection = connection
@@ -92,7 +107,7 @@ final class BonjourAdvertiser {
                     nextBuffer.append(data)
                 }
 
-                guard nextBuffer.count <= Self.maximumPresenceMessageSize else {
+                guard nextBuffer.count <= Self.maximumMessageSize else {
                     self.disconnectPhone(connection)
                     return
                 }
@@ -111,9 +126,15 @@ final class BonjourAdvertiser {
                     return
                 }
 
-                // No application traffic is accepted before secure pairing is implemented.
-                if didHandshake, !nextBuffer.isEmpty {
-                    self.disconnectPhone(connection)
+                if didHandshake, let newline = nextBuffer.firstIndex(of: 0x0A) {
+                    let messageData = Data(nextBuffer[..<newline])
+                    let remainder = Data(nextBuffer[nextBuffer.index(after: newline)...])
+                    guard !messageData.isEmpty else {
+                        self.disconnectPhone(connection)
+                        return
+                    }
+                    self.onPairingMessage?(messageData)
+                    self.receive(on: connection, buffer: remainder, didHandshake: true)
                 } else if isComplete || error != nil {
                     self.disconnectPhone(connection)
                 } else {

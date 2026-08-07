@@ -36,6 +36,7 @@ enum ConnectionPhase: String, CaseIterable, Sendable {
              (.discovering, .connecting),
              (.connecting, .discovering),
              (.connecting, .authenticating),
+             (.authenticating, .discovering),
              (.authenticating, .syncing),
              (.syncing, .connected),
              (.connected, .recovering),
