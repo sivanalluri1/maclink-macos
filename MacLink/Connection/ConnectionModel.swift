@@ -107,7 +107,9 @@ final class ConnectionModel {
 
     private func handlePhoneDisconnected() {
         detectedPhone = nil
-        if pairing.status != .paired {
+        // Scanning is handled by a separate activity on Android. A transient TCP
+        // disconnect must not invalidate the QR that the phone is still scanning.
+        if pairing.status != .paired && pairing.status != .qrReady {
             pairing.reset()
         }
         if phase == .connecting || phase == .authenticating {
