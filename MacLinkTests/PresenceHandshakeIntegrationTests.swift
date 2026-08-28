@@ -20,11 +20,16 @@ struct PresenceHandshakeIntegrationTests {
         defer { advertiser.stop() }
 
         let port = try await waitForPort { advertisementState }
-        let connection = NWConnection(
-            host: NWEndpoint.Host("127.0.0.1"),
-            port: NWEndpoint.Port(rawValue: port)!,
-            using: .tcp
+        let parameters = NWParameters.tcp
+        let webSocket = NWProtocolWebSocket.Options(.version13)
+        webSocket.autoReplyPing = true
+        webSocket.maximumMessageSize = 1024 * 1024
+        webSocket.setSubprotocols(["maclink.v1"])
+        parameters.defaultProtocolStack.applicationProtocols.insert(webSocket, at: 0)
+        let endpoint = NWEndpoint.url(
+            URL(string: "ws://127.0.0.1:\(port)/maclink")!
         )
+        let connection = NWConnection(to: endpoint, using: parameters)
         connection.start(queue: .global())
         defer { connection.cancel() }
 
@@ -33,11 +38,20 @@ struct PresenceHandshakeIntegrationTests {
             deviceName: "Integration Phone",
             appVersion: "0.1.0"
         )
-        var request = try JSONEncoder().encode(presence)
-        request.append(0x0A)
-        connection.send(content: request, completion: .contentProcessed { _ in })
+        let request = try JSONEncoder().encode(presence)
+        let metadata = NWProtocolWebSocket.Metadata(opcode: .text)
+        let context = NWConnection.ContentContext(
+            identifier: "test.websocket.message",
+            metadata: [metadata]
+        )
+        connection.send(
+            content: request,
+            contentContext: context,
+            isComplete: true,
+            completion: .contentProcessed { _ in }
+        )
 
-        let response = try await receiveLine(from: connection)
+        let response = try await receiveMessage(from: connection)
         let acknowledgement = try JSONSerialization.jsonObject(with: response) as? [String: Any]
 
         #expect(acknowledgement?["kind"] as? String == "presence_ack")
@@ -65,30 +79,24 @@ struct PresenceHandshakeIntegrationTests {
         throw IntegrationTestError.timedOut
     }
 
-    private func receiveLine(from connection: NWConnection) async throws -> Data {
-        var buffer = Data()
-        while buffer.count <= 8 * 1024 {
-            let data: Data = try await withCheckedThrowingContinuation {
-                (continuation: CheckedContinuation<Data, any Error>) in
-                connection.receive(minimumIncompleteLength: 1, maximumLength: 4_096) {
-                    data, _, isComplete, error in
-                    if let error {
-                        continuation.resume(throwing: error)
-                    } else if let data {
-                        continuation.resume(returning: data)
-                    } else if isComplete {
-                        continuation.resume(throwing: IntegrationTestError.closed)
-                    } else {
-                        continuation.resume(returning: Data())
-                    }
+    private func receiveMessage(from connection: NWConnection) async throws -> Data {
+        try await withCheckedThrowingContinuation {
+            (continuation: CheckedContinuation<Data, any Error>) in
+            connection.receiveMessage { data, context, _, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else if let data,
+                          data.count <= 8 * 1024,
+                          let metadata = context?.protocolMetadata(
+                            definition: NWProtocolWebSocket.definition
+                          ) as? NWProtocolWebSocket.Metadata,
+                          metadata.opcode == .text {
+                    continuation.resume(returning: data)
+                } else {
+                    continuation.resume(throwing: IntegrationTestError.closed)
                 }
             }
-            buffer.append(data)
-            if let newline = buffer.firstIndex(of: 0x0A) {
-                return Data(buffer[..<newline])
-            }
         }
-        throw IntegrationTestError.oversized
     }
 }
 

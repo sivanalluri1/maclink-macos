@@ -18,7 +18,7 @@ final class BonjourAdvertiser {
     private let descriptor: BonjourServiceDescriptor
     private var listener: NWListener?
     private var phoneConnection: NWConnection?
-    private static let maximumMessageSize = 16 * 1024
+    private static let maximumMessageSize = 1024 * 1024
 
     init(descriptor: BonjourServiceDescriptor) {
         self.descriptor = descriptor
@@ -28,7 +28,13 @@ final class BonjourAdvertiser {
         guard listener == nil else { return }
 
         do {
-            let listener = try NWListener(using: .tcp, on: .any)
+            let parameters = NWParameters.tcp
+            let webSocket = NWProtocolWebSocket.Options(.version13)
+            webSocket.autoReplyPing = true
+            webSocket.maximumMessageSize = Self.maximumMessageSize
+            webSocket.setSubprotocols(["maclink.v1"])
+            parameters.defaultProtocolStack.applicationProtocols.insert(webSocket, at: 0)
+            let listener = try NWListener(using: parameters, on: .any)
             listener.service = NWListener.Service(
                 name: descriptor.serviceName,
                 type: BonjourServiceDescriptor.serviceType,
@@ -67,15 +73,18 @@ final class BonjourAdvertiser {
     func sendPairingMessage(_ message: Data) {
         guard let connection = phoneConnection,
               message.count <= Self.maximumMessageSize else { return }
-        var framed = message
-        framed.append(0x0A)
-        connection.send(content: framed, completion: .contentProcessed { [weak self, weak connection] error in
+        send(message, opcode: .text, on: connection) { [weak self, weak connection] error in
             guard error != nil else { return }
             Task { @MainActor in
                 guard let self, let connection else { return }
                 self.disconnectPhone(connection)
             }
-        })
+        }
+    }
+
+    func terminatePhoneConnection() {
+        guard let phoneConnection else { return }
+        disconnectPhone(phoneConnection)
     }
 
     private func accept(_ connection: NWConnection) {
@@ -93,53 +102,48 @@ final class BonjourAdvertiser {
             }
         }
         connection.start(queue: .main)
-        receive(on: connection, buffer: Data(), didHandshake: false)
+        receive(on: connection, didHandshake: false)
     }
 
-    private func receive(on connection: NWConnection, buffer: Data, didHandshake: Bool) {
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 4_096) {
-            [weak self, weak connection] data, _, isComplete, error in
+    private func receive(on connection: NWConnection, didHandshake: Bool) {
+        connection.receiveMessage {
+            [weak self, weak connection] data, context, _, error in
             Task { @MainActor in
                 guard let self, let connection, connection === self.phoneConnection else { return }
-
-                var nextBuffer = buffer
-                if let data {
-                    nextBuffer.append(data)
-                }
-
-                guard nextBuffer.count <= Self.maximumMessageSize else {
+                guard error == nil,
+                      let data,
+                      data.count <= Self.maximumMessageSize,
+                      let metadata = context?.protocolMetadata(
+                        definition: NWProtocolWebSocket.definition
+                      ) as? NWProtocolWebSocket.Metadata else {
                     self.disconnectPhone(connection)
                     return
                 }
 
-                if !didHandshake, let newline = nextBuffer.firstIndex(of: 0x0A) {
-                    let messageData = Data(nextBuffer[..<newline])
-                    let remainder = Data(nextBuffer[nextBuffer.index(after: newline)...])
-                    guard let presence = try? JSONDecoder().decode(PhonePresence.self, from: messageData) else {
+                if metadata.opcode == .ping {
+                    self.receive(on: connection, didHandshake: didHandshake)
+                    return
+                }
+                guard metadata.opcode == .text || metadata.opcode == .binary else {
+                    self.disconnectPhone(connection)
+                    return
+                }
+
+                if !didHandshake {
+                    guard metadata.opcode == .text,
+                          let presence = try? JSONDecoder().decode(PhonePresence.self, from: data) else {
                         self.disconnectPhone(connection)
                         return
                     }
 
                     self.onPhoneDetected?(presence)
                     self.sendAcknowledgement(on: connection)
-                    self.receive(on: connection, buffer: remainder, didHandshake: true)
+                    self.receive(on: connection, didHandshake: true)
                     return
                 }
 
-                if didHandshake, let newline = nextBuffer.firstIndex(of: 0x0A) {
-                    let messageData = Data(nextBuffer[..<newline])
-                    let remainder = Data(nextBuffer[nextBuffer.index(after: newline)...])
-                    guard !messageData.isEmpty else {
-                        self.disconnectPhone(connection)
-                        return
-                    }
-                    self.onPairingMessage?(messageData)
-                    self.receive(on: connection, buffer: remainder, didHandshake: true)
-                } else if isComplete || error != nil {
-                    self.disconnectPhone(connection)
-                } else {
-                    self.receive(on: connection, buffer: nextBuffer, didHandshake: didHandshake)
-                }
+                self.onPairingMessage?(data)
+                self.receive(on: connection, didHandshake: true)
             }
         }
     }
@@ -149,18 +153,36 @@ final class BonjourAdvertiser {
             macDeviceID: descriptor.deviceID,
             macName: descriptor.displayName
         )
-        guard var data = try? JSONEncoder().encode(acknowledgement) else {
+        guard let data = try? JSONEncoder().encode(acknowledgement) else {
             disconnectPhone(connection)
             return
         }
-        data.append(0x0A)
-        connection.send(content: data, completion: .contentProcessed { [weak self, weak connection] error in
+        send(data, opcode: .text, on: connection) { [weak self, weak connection] error in
             guard error != nil else { return }
             Task { @MainActor in
                 guard let self, let connection else { return }
                 self.disconnectPhone(connection)
             }
-        })
+        }
+    }
+
+    private func send(
+        _ data: Data,
+        opcode: NWProtocolWebSocket.Opcode,
+        on connection: NWConnection,
+        completion: @escaping @Sendable (NWError?) -> Void
+    ) {
+        let metadata = NWProtocolWebSocket.Metadata(opcode: opcode)
+        let context = NWConnection.ContentContext(
+            identifier: "maclink.websocket.message",
+            metadata: [metadata]
+        )
+        connection.send(
+            content: data,
+            contentContext: context,
+            isComplete: true,
+            completion: .contentProcessed(completion)
+        )
     }
 
     private func disconnectPhone(_ connection: NWConnection) {

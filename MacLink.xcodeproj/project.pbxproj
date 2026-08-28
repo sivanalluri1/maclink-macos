@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0BCF4B47AE509B3C0C85E71A /* PairingKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2810A80281EBCE10C98C15E /* PairingKeychain.swift */; };
+		0D15E82721ECD4A0891C7985 /* SecureSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81E7E33012A5C4D10B4B06F /* SecureSessionProtocol.swift */; };
 		168757836B4D13DC3D80263B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BEB00E92568C29E2EFDBE2 /* SettingsView.swift */; };
+		1B4AB77E610BAB01F63094A8 /* SecureSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03AB061C471ACB8E0E36D36 /* SecureSessionCoordinator.swift */; };
 		1F676EEF63E1B000379DDBD1 /* PairingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830FB8647653AD08FC96B8C0 /* PairingProtocol.swift */; };
 		505BBE25180322B498F3D359 /* SecurePairingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74895733BA40BF0D99675CD7 /* SecurePairingCoordinator.swift */; };
 		7C9A50108B2E96D49764F943 /* PairingProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD3D177F6801F7C734247CA /* PairingProtocolTests.swift */; };
@@ -26,6 +28,7 @@
 		DE1DAB2F446F702DCA48F978 /* BonjourAdvertiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831E4E13EE2478BB6BA03931 /* BonjourAdvertiser.swift */; };
 		F78ED9C342646D0FAA79ACC4 /* ConnectionPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644C8C52D0615942567255B7 /* ConnectionPhase.swift */; };
 		FDF0AE3FBEE20A62C29F24F5 /* ConnectionPhaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */; };
+		FEE150ECAC3135EB9D764DC5 /* SecureSessionProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073A69AD6E1802B5B6824581 /* SecureSessionProtocolTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		073A69AD6E1802B5B6824581 /* SecureSessionProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureSessionProtocolTests.swift; sourceTree = "<group>"; };
 		0F33D59DD9EE6F90D2B47C9C /* ConnectionPhaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPhaseTests.swift; sourceTree = "<group>"; };
 		1244957D01C2749850A2336E /* BonjourServiceDescriptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDescriptorTests.swift; sourceTree = "<group>"; };
 		133E4308330EC88ECE32D48A /* BonjourServiceDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourServiceDescriptor.swift; sourceTree = "<group>"; };
@@ -59,7 +63,9 @@
 		A0A7485C4278E11560E673F0 /* MacLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4F9D2B255E5759D50AA7023 /* PresenceHandshakeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenceHandshakeIntegrationTests.swift; sourceTree = "<group>"; };
 		C65C13B0AB1E59664E9F0CF0 /* DeviceIdentityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentityStore.swift; sourceTree = "<group>"; };
+		D03AB061C471ACB8E0E36D36 /* SecureSessionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureSessionCoordinator.swift; sourceTree = "<group>"; };
 		DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModel.swift; sourceTree = "<group>"; };
+		E81E7E33012A5C4D10B4B06F /* SecureSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureSessionProtocol.swift; sourceTree = "<group>"; };
 		EFD3D177F6801F7C734247CA /* PairingProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingProtocolTests.swift; sourceTree = "<group>"; };
 		F2810A80281EBCE10C98C15E /* PairingKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingKeychain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,6 +155,8 @@
 				DBC4CEF2DE8C8B8A6EBD018D /* ConnectionModel.swift */,
 				644C8C52D0615942567255B7 /* ConnectionPhase.swift */,
 				7EB05336A6648D1F1602D987 /* PhonePresence.swift */,
+				D03AB061C471ACB8E0E36D36 /* SecureSessionCoordinator.swift */,
+				E81E7E33012A5C4D10B4B06F /* SecureSessionProtocol.swift */,
 			);
 			path = Connection;
 			sourceTree = "<group>";
@@ -162,6 +170,7 @@
 				606C28EEECB5BD0F766D750C /* PhonePresenceTests.swift */,
 				B4F9D2B255E5759D50AA7023 /* PresenceHandshakeIntegrationTests.swift */,
 				585D3CB9169D4E32E6FDEC3E /* SecurePairingCoordinatorTests.swift */,
+				073A69AD6E1802B5B6824581 /* SecureSessionProtocolTests.swift */,
 			);
 			path = MacLinkTests;
 			sourceTree = "<group>";
@@ -254,6 +263,7 @@
 				972461998BFE63F51C0C0B94 /* PhonePresenceTests.swift in Sources */,
 				D92030AE8AA104E38B43838A /* PresenceHandshakeIntegrationTests.swift in Sources */,
 				C6245F02144055CFB9882F59 /* SecurePairingCoordinatorTests.swift in Sources */,
+				FEE150ECAC3135EB9D764DC5 /* SecureSessionProtocolTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +283,8 @@
 				C0B63C8C320C464F04E0E104 /* PairingQRCodeView.swift in Sources */,
 				97F24E1673FC3B4B427F806B /* PhonePresence.swift in Sources */,
 				505BBE25180322B498F3D359 /* SecurePairingCoordinator.swift in Sources */,
+				1B4AB77E610BAB01F63094A8 /* SecureSessionCoordinator.swift in Sources */,
+				0D15E82721ECD4A0891C7985 /* SecureSessionProtocol.swift in Sources */,
 				168757836B4D13DC3D80263B /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
